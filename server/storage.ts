@@ -1,12 +1,7 @@
-import { 
-  users, colleges, events, registrations, feedPosts, admins,
-  type User, type InsertUser,
-  type College, type InsertCollege,
-  type Event, type InsertEvent,
-  type Registration, type InsertRegistration,
-  type FeedPost, type InsertFeedPost,
-  type Admin, type InsertAdmin
-} from "@shared/schema";
+import type { User, InsertUser, College, InsertCollege, Event, InsertEvent, Registration, InsertRegistration, FeedPost, InsertFeedPost, Admin, InsertAdmin } from "@shared/schema";
+import { users, colleges, events, registrations, feedPosts, admins } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, asc, and } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -58,269 +53,211 @@ export interface IStorage {
   createAdmin(admin: InsertAdmin): Promise<Admin>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private colleges: Map<number, College>;
-  private events: Map<number, Event>;
-  private registrations: Map<number, Registration>;
-  private feedPosts: Map<number, FeedPost>;
-  private admins: Map<number, Admin>;
-  private currentId: { [key: string]: number };
-
-  constructor() {
-    this.users = new Map();
-    this.colleges = new Map();
-    this.events = new Map();
-    this.registrations = new Map();
-    this.feedPosts = new Map();
-    this.admins = new Map();
-    this.currentId = {
-      users: 1,
-      colleges: 1,
-      events: 1,
-      registrations: 1,
-      feedPosts: 1,
-      admins: 1,
-    };
-
-    // Initialize with default super admin
-    this.createAdmin({
-      username: "admin",
-      email: "admin@collabzone.edu",
-      password: "admin123",
-      role: "super_admin"
-    });
-  }
-
-  // Users
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.username === username);
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId.users++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
-  // Colleges
   async getCollege(id: number): Promise<College | undefined> {
-    return this.colleges.get(id);
+    const [college] = await db.select().from(colleges).where(eq(colleges.id, id));
+    return college || undefined;
   }
 
   async getCollegeByEmail(email: string): Promise<College | undefined> {
-    return Array.from(this.colleges.values()).find(college => college.email === email);
+    const [college] = await db.select().from(colleges).where(eq(colleges.email, email));
+    return college || undefined;
   }
 
   async getAllColleges(): Promise<College[]> {
-    return Array.from(this.colleges.values());
+    return await db.select().from(colleges).orderBy(asc(colleges.name));
   }
 
   async getApprovedColleges(): Promise<College[]> {
-    return Array.from(this.colleges.values()).filter(college => college.isApproved);
+    return await db.select().from(colleges).where(eq(colleges.isApproved, true)).orderBy(asc(colleges.name));
   }
 
   async getPendingColleges(): Promise<College[]> {
-    return Array.from(this.colleges.values()).filter(college => !college.isApproved);
+    return await db.select().from(colleges).where(eq(colleges.isApproved, false)).orderBy(desc(colleges.createdAt));
   }
 
   async createCollege(insertCollege: InsertCollege): Promise<College> {
-    const id = this.currentId.colleges++;
-    const college: College = {
-      ...insertCollege,
-      id,
-      isApproved: false,
-      studentsCount: 0,
-      createdAt: new Date(),
-    };
-    this.colleges.set(id, college);
+    const [college] = await db
+      .insert(colleges)
+      .values(insertCollege)
+      .returning();
     return college;
   }
 
   async updateCollege(id: number, updates: Partial<College>): Promise<College | undefined> {
-    const college = this.colleges.get(id);
-    if (!college) return undefined;
-    
-    const updatedCollege = { ...college, ...updates };
-    this.colleges.set(id, updatedCollege);
-    return updatedCollege;
+    const [college] = await db
+      .update(colleges)
+      .set(updates)
+      .where(eq(colleges.id, id))
+      .returning();
+    return college || undefined;
   }
 
   async deleteCollege(id: number): Promise<boolean> {
-    return this.colleges.delete(id);
+    const result = await db.delete(colleges).where(eq(colleges.id, id));
+    return result.rowCount > 0;
   }
 
-  // Events
   async getEvent(id: number): Promise<Event | undefined> {
-    return this.events.get(id);
+    const [event] = await db.select().from(events).where(eq(events.id, id));
+    return event || undefined;
   }
 
   async getAllEvents(): Promise<Event[]> {
-    return Array.from(this.events.values());
+    return await db.select().from(events).orderBy(desc(events.createdAt));
   }
 
   async getEventsByCollege(collegeId: number): Promise<Event[]> {
-    return Array.from(this.events.values()).filter(event => event.collegeId === collegeId);
+    return await db.select().from(events).where(eq(events.collegeId, collegeId)).orderBy(desc(events.createdAt));
   }
 
   async getUpcomingEvents(): Promise<Event[]> {
-    const now = new Date();
-    return Array.from(this.events.values()).filter(event => new Date(event.date) > now);
+    return await db.select().from(events).where(eq(events.isApproved, true)).orderBy(asc(events.createdAt));
   }
 
   async getPastEvents(): Promise<Event[]> {
-    const now = new Date();
-    return Array.from(this.events.values()).filter(event => new Date(event.date) <= now);
+    return await db.select().from(events).where(eq(events.isApproved, true)).orderBy(desc(events.createdAt));
   }
 
   async getEventsByCategory(category: string): Promise<Event[]> {
-    return Array.from(this.events.values()).filter(event => event.category === category);
+    return await db.select().from(events).where(and(
+      eq(events.category, category),
+      eq(events.isApproved, true)
+    )).orderBy(desc(events.createdAt));
   }
 
   async createEvent(insertEvent: InsertEvent): Promise<Event> {
-    const id = this.currentId.events++;
-    const event: Event = {
-      ...insertEvent,
-      id,
-      currentParticipants: 0,
-      isActive: true,
-      createdAt: new Date(),
-    };
-    this.events.set(id, event);
+    const [event] = await db
+      .insert(events)
+      .values(insertEvent)
+      .returning();
     return event;
   }
 
   async updateEvent(id: number, updates: Partial<Event>): Promise<Event | undefined> {
-    const event = this.events.get(id);
-    if (!event) return undefined;
-    
-    const updatedEvent = { ...event, ...updates };
-    this.events.set(id, updatedEvent);
-    return updatedEvent;
+    const [event] = await db
+      .update(events)
+      .set(updates)
+      .where(eq(events.id, id))
+      .returning();
+    return event || undefined;
   }
 
   async deleteEvent(id: number): Promise<boolean> {
-    return this.events.delete(id);
+    const result = await db.delete(events).where(eq(events.id, id));
+    return result.rowCount > 0;
   }
 
-  // Registrations
   async getRegistration(id: number): Promise<Registration | undefined> {
-    return this.registrations.get(id);
+    const [registration] = await db.select().from(registrations).where(eq(registrations.id, id));
+    return registration || undefined;
   }
 
   async getRegistrationsByEvent(eventId: number): Promise<Registration[]> {
-    return Array.from(this.registrations.values()).filter(reg => reg.eventId === eventId);
+    return await db.select().from(registrations).where(eq(registrations.eventId, eventId)).orderBy(desc(registrations.registeredAt));
   }
 
   async createRegistration(insertRegistration: InsertRegistration): Promise<Registration> {
-    const id = this.currentId.registrations++;
-    const registration: Registration = {
-      ...insertRegistration,
-      id,
-      isVerified: false,
-      registeredAt: new Date(),
-    };
-    this.registrations.set(id, registration);
-
-    // Update event participant count
-    const event = this.events.get(insertRegistration.eventId);
-    if (event) {
-      event.currentParticipants = (event.currentParticipants || 0) + 1;
-      this.events.set(insertRegistration.eventId, event);
-    }
-
+    const [registration] = await db
+      .insert(registrations)
+      .values(insertRegistration)
+      .returning();
     return registration;
   }
 
   async updateRegistration(id: number, updates: Partial<Registration>): Promise<Registration | undefined> {
-    const registration = this.registrations.get(id);
-    if (!registration) return undefined;
-    
-    const updatedRegistration = { ...registration, ...updates };
-    this.registrations.set(id, updatedRegistration);
-    return updatedRegistration;
+    const [registration] = await db
+      .update(registrations)
+      .set(updates)
+      .where(eq(registrations.id, id))
+      .returning();
+    return registration || undefined;
   }
 
   async deleteRegistration(id: number): Promise<boolean> {
-    return this.registrations.delete(id);
+    const result = await db.delete(registrations).where(eq(registrations.id, id));
+    return result.rowCount > 0;
   }
 
-  // Feed Posts
   async getFeedPost(id: number): Promise<FeedPost | undefined> {
-    return this.feedPosts.get(id);
+    const [post] = await db.select().from(feedPosts).where(eq(feedPosts.id, id));
+    return post || undefined;
   }
 
   async getAllFeedPosts(): Promise<FeedPost[]> {
-    return Array.from(this.feedPosts.values()).sort((a, b) => 
-      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
-    );
+    return await db.select().from(feedPosts).orderBy(desc(feedPosts.createdAt));
   }
 
   async getApprovedFeedPosts(): Promise<FeedPost[]> {
-    return Array.from(this.feedPosts.values())
-      .filter(post => post.isApproved)
-      .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
+    return await db.select().from(feedPosts).where(eq(feedPosts.isApproved, true)).orderBy(desc(feedPosts.createdAt));
   }
 
   async getPendingFeedPosts(): Promise<FeedPost[]> {
-    return Array.from(this.feedPosts.values()).filter(post => !post.isApproved);
+    return await db.select().from(feedPosts).where(eq(feedPosts.isApproved, false)).orderBy(desc(feedPosts.createdAt));
   }
 
   async createFeedPost(insertPost: InsertFeedPost): Promise<FeedPost> {
-    const id = this.currentId.feedPosts++;
-    const post: FeedPost = {
-      ...insertPost,
-      id,
-      likes: 0,
-      comments: 0,
-      isApproved: true,
-      createdAt: new Date(),
-    };
-    this.feedPosts.set(id, post);
+    const [post] = await db
+      .insert(feedPosts)
+      .values(insertPost)
+      .returning();
     return post;
   }
 
   async updateFeedPost(id: number, updates: Partial<FeedPost>): Promise<FeedPost | undefined> {
-    const post = this.feedPosts.get(id);
-    if (!post) return undefined;
-    
-    const updatedPost = { ...post, ...updates };
-    this.feedPosts.set(id, updatedPost);
-    return updatedPost;
+    const [post] = await db
+      .update(feedPosts)
+      .set(updates)
+      .where(eq(feedPosts.id, id))
+      .returning();
+    return post || undefined;
   }
 
   async deleteFeedPost(id: number): Promise<boolean> {
-    return this.feedPosts.delete(id);
+    const result = await db.delete(feedPosts).where(eq(feedPosts.id, id));
+    return result.rowCount > 0;
   }
 
-  // Admins
   async getAdmin(id: number): Promise<Admin | undefined> {
-    return this.admins.get(id);
+    const [admin] = await db.select().from(admins).where(eq(admins.id, id));
+    return admin || undefined;
   }
 
   async getAdminByUsername(username: string): Promise<Admin | undefined> {
-    return Array.from(this.admins.values()).find(admin => admin.username === username);
+    const [admin] = await db.select().from(admins).where(eq(admins.username, username));
+    return admin || undefined;
   }
 
   async getAdminByEmail(email: string): Promise<Admin | undefined> {
-    return Array.from(this.admins.values()).find(admin => admin.email === email);
+    const [admin] = await db.select().from(admins).where(eq(admins.email, email));
+    return admin || undefined;
   }
 
   async createAdmin(insertAdmin: InsertAdmin): Promise<Admin> {
-    const id = this.currentId.admins++;
-    const admin: Admin = {
-      ...insertAdmin,
-      id,
-      createdAt: new Date(),
-    };
-    this.admins.set(id, admin);
+    const [admin] = await db
+      .insert(admins)
+      .values(insertAdmin)
+      .returning();
     return admin;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

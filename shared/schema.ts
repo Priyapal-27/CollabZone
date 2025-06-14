@@ -1,4 +1,5 @@
 import { pgTable, text, serial, integer, boolean, timestamp, decimal } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -133,3 +134,27 @@ export type FeedPost = typeof feedPosts.$inferSelect;
 
 export type InsertAdmin = z.infer<typeof insertAdminSchema>;
 export type Admin = typeof admins.$inferSelect;
+
+// Relations
+export const collegesRelations = relations(colleges, ({ many }) => ({
+  events: many(events),
+}));
+
+export const eventsRelations = relations(events, ({ one, many }) => ({
+  college: one(colleges, {
+    fields: [events.collegeId],
+    references: [colleges.id],
+  }),
+  registrations: many(registrations),
+}));
+
+export const registrationsRelations = relations(registrations, ({ one }) => ({
+  event: one(events, {
+    fields: [registrations.eventId],
+    references: [events.id],
+  }),
+}));
+
+export const feedPostsRelations = relations(feedPosts, ({ one }) => ({
+  // No direct foreign key relations for feed posts as they reference colleges by name
+}));
