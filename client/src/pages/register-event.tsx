@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { NameInput } from "@/components/ui/name-input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Upload } from "lucide-react";
 import { Link } from "wouter";
@@ -18,11 +20,11 @@ import type { Event } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 
 const registrationSchema = z.object({
-  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  fullName: z.string().min(2, "Full name must be at least 2 characters").max(50, "Full name must be less than 50 characters").regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
   email: z.string().email("Please enter a valid email address"),
-  phone: z.string().min(10, "Please enter a valid phone number"),
-  college: z.string().min(2, "College name is required"),
-  course: z.string().min(2, "Course/Position is required"),
+  phone: z.string().regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+  college: z.string().min(2, "College name must be at least 2 characters").max(100, "College name must be less than 100 characters"),
+  course: z.string().min(2, "Course name must be at least 2 characters").max(50, "Course name must be less than 50 characters"),
   address: z.string().optional(),
 });
 
@@ -216,7 +218,12 @@ export default function RegisterEvent() {
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your full name" {...field} />
+                        <NameInput 
+                          placeholder="Enter your full name" 
+                          value={field.value}
+                          onChange={field.onChange}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -244,7 +251,12 @@ export default function RegisterEvent() {
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="+91 98765 43210" {...field} />
+                        <PhoneInput 
+                          placeholder="Enter 10 digit mobile number" 
+                          value={field.value}
+                          onChange={field.onChange}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

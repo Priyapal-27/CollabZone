@@ -2,7 +2,7 @@ import React from "react";
 import { Input } from "./input";
 import { cn } from "@/lib/utils";
 
-interface PhoneInputProps {
+interface NameInputProps {
   className?: string;
   value?: string;
   onChange?: (value: string) => void;
@@ -13,19 +13,19 @@ interface PhoneInputProps {
   id?: string;
 }
 
-const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
+const NameInput = React.forwardRef<HTMLInputElement, NameInputProps>(
   ({ className, value, onChange, ...props }, ref) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value;
-      // Only allow digits and limit to 10 characters
-      const numericValue = inputValue.replace(/\D/g, "").slice(0, 10);
-      onChange?.(numericValue);
+      // Only allow letters and spaces
+      const nameValue = inputValue.replace(/[^a-zA-Z\s]/g, "");
+      onChange?.(nameValue);
     };
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      // Allow only numbers, backspace, delete, and arrow keys
+      // Allow only letters, spaces, backspace, delete, and arrow keys
       if (
-        !/\d/.test(e.key) &&
+        !/[a-zA-Z\s]/.test(e.key) &&
         !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
       ) {
         e.preventDefault();
@@ -36,18 +36,16 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       <Input
         {...props}
         ref={ref}
-        type="tel"
         value={value || ""}
         onChange={handleChange}
         onKeyDown={handleKeyPress}
-        maxLength={10}
-        placeholder="Enter 10 digit mobile number"
+        placeholder="Enter your full name"
         className={cn(className)}
       />
     );
   }
 );
 
-PhoneInput.displayName = "PhoneInput";
+NameInput.displayName = "NameInput";
 
-export { PhoneInput };
+export { NameInput };
