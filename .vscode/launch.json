@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch CollabZone",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/index.js",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "restart": true,
+      "runtimeExecutable": "node"
+    },
+    {
+      "name": "Debug CollabZone",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/index.js",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "stopOnEntry": false,
+      "sourceMaps": true
+    }
+  ]
+}
