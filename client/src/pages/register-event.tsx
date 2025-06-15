@@ -222,7 +222,7 @@ export default function RegisterEvent() {
                           placeholder="Enter your full name" 
                           value={field.value}
                           onChange={field.onChange}
-                          {...field}
+                          name={field.name}
                         />
                       </FormControl>
                       <FormMessage />
@@ -255,7 +255,7 @@ export default function RegisterEvent() {
                           placeholder="Enter 10 digit mobile number" 
                           value={field.value}
                           onChange={field.onChange}
-                          {...field}
+                          name={field.name}
                         />
                       </FormControl>
                       <FormMessage />
