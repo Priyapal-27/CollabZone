@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useLocation } from 'wouter'
 import { eventAPI } from '../api'
 
 export default function CreateEvent() {
-  const navigate = useNavigate()
+  const [, navigate] = useLocation()
   const [submitting, setSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: '',

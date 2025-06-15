@@ -47,16 +47,16 @@ function App() {
               <Route path="/college/login" component={CollegeLogin} />
               <Route path="/college/dashboard" component={CollegeDashboard} />
               <Route path="/college/create-event" component={CreateEvent} />
-              <Route path="/college/manage-events" element={<ManageEvents />} />
-              <Route path="/college/registrations/:eventId" element={<ViewRegistrations />} />
+              <Route path="/college/manage-events" component={ManageEvents} />
+              <Route path="/college/registrations/:eventId" component={ViewRegistrations} />
               
               {/* Admin Routes */}
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/events" element={<AllEvents />} />
-              <Route path="/admin/feed" element={<FeedModeration />} />
-              <Route path="/admin/users" element={<AllUsers />} />
-            </Routes>
+              <Route path="/admin/login" component={AdminLogin} />
+              <Route path="/admin/dashboard" component={AdminDashboard} />
+              <Route path="/admin/events" component={AllEvents} />
+              <Route path="/admin/feed" component={FeedModeration} />
+              <Route path="/admin/users" component={AllUsers} />
+            </Switch>
           </main>
           <Footer />
         </div>

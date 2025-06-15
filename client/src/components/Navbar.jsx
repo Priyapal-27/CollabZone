@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useLocation } from 'wouter'
 import ThemeToggle from './ThemeToggle'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
-  const location = useLocation()
+  const [location] = useLocation()
 
-  const isActive = (path) => location.pathname === path
+  const isActive = (path) => location === path
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">

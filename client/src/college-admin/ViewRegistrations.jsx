@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useRoute, useLocation } from 'wouter'
 import { eventAPI } from '../api'
 
 export default function ViewRegistrations() {
-  const { eventId } = useParams()
-  const navigate = useNavigate()
+  const [match, params] = useRoute('/college/registrations/:eventId')
+  const [, navigate] = useLocation()
+  const eventId = params?.eventId
   const [event, setEvent] = useState(null)
   const [registrations, setRegistrations] = useState([])
   const [loading, setLoading] = useState(true)

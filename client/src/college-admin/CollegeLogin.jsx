@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState } from 'react'
+import { useLocation, Link } from 'wouter'
 import { collegeAPI } from '../api'
 
 export default function CollegeLogin() {
-  const navigate = useNavigate()
+  const [, navigate] = useLocation()
   const [formData, setFormData] = useState({
     email: '',
     password: ''

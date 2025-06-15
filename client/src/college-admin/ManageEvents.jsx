@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'wouter'
 import { eventAPI } from '../api'
 
 export default function ManageEvents() {
-  const navigate = useNavigate()
+  const [, navigate] = useLocation()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [college, setCollege] = useState(null)
