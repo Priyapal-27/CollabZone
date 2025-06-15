@@ -1,137 +1,175 @@
 # CollabZone - Intra-College Event Management System
 
-## Overview
+A full-stack web application designed to connect multiple colleges and manage inter-college events. The platform allows colleges to register, post events, and users can explore and register for events across institutions.
 
-CollabZone is a full-stack web application designed to connect multiple colleges and manage inter-college events. The platform allows colleges to register, create events, and facilitate student participation across institutions while maintaining a collaborative social feed.
+## Features
 
-## System Architecture
+### Public Features
+- **Browse Colleges**: Explore colleges and their upcoming events
+- **Event Discovery**: View detailed event information with registration capabilities
+- **Event Registration**: Register for events with integrated payment support
+- **Social Feed**: Community posts and announcements
+- **Dark/Light Theme**: Toggle between themes with system preference detection
 
-### Frontend Architecture
-- **Framework**: React 18 with TypeScript
-- **Routing**: Wouter for client-side routing
-- **Styling**: Tailwind CSS with shadcn/ui component library
-- **State Management**: React Query (TanStack Query) for server state
-- **Build Tool**: Vite for development and production builds
-- **Theme System**: Light/dark mode support with system preference detection
+### College Admin Features
+- **College Dashboard**: Overview of events and registrations
+- **Event Management**: Create, edit, and delete events
+- **Registration Management**: View and export event registrations
+- **Automatic Approval**: Colleges are auto-approved upon registration
 
-### Backend Architecture
-- **Runtime**: Node.js with Express.js
-- **Language**: TypeScript with ES modules
-- **Database**: PostgreSQL with Drizzle ORM
-- **Database Provider**: Neon Database (@neondatabase/serverless)
-- **Session Management**: PostgreSQL-backed sessions with connect-pg-simple
-- **Development**: Hot reload with tsx
+### Super Admin Features
+- **Platform Overview**: Monitor all colleges, events, and users
+- **Event Moderation**: View and manage all platform events
+- **Feed Moderation**: Review and approve community posts
+- **User Management**: View platform users and activity
 
-### Project Structure
+## Tech Stack
+
+### Frontend
+- **React 18** with JavaScript
+- **React Router DOM** for routing
+- **Tailwind CSS** for styling
+- **Axios** for API requests
+
+### Backend
+- **Node.js** with Express.js
+- **JavaScript ES Modules**
+- **CORS** enabled for cross-origin requests
+
+### Development
+- **Vite** for fast development and building
+- **Hot Module Replacement** for development efficiency
+
+## Project Structure
+
 ```
-├── client/           # Frontend React application
-├── server/           # Backend Express.js application
-├── shared/           # Shared TypeScript types and schemas
-└── migrations/       # Database migration files
+├── client/                 # React frontend application
+│   ├── src/
+│   │   ├── components/     # Reusable components (Navbar, Footer, Cards)
+│   │   ├── pages/          # Public pages (Home, Colleges, Events, etc.)
+│   │   ├── college-admin/  # College admin interface
+│   │   ├── admin/          # Super admin interface
+│   │   └── assets/         # Static assets
+├── server/                 # Express.js backend
+├── uploads/                # File upload directory
+└── README.md
 ```
 
-## Key Components
+## Getting Started
 
-### Database Schema
-- **Users**: Basic user authentication
-- **Colleges**: Institution profiles with approval workflow
-- **Events**: Event management with categories, fees, and participant tracking
-- **Registrations**: Event registration system with payment proof upload
-- **Feed Posts**: Social feed for college communities
-- **Admins**: Super admin management system
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn package manager
 
-### Authentication & Authorization
-- **College Admin**: Session-based authentication for college administrators
-- **Super Admin**: Separate admin authentication for platform management
-- **Public Access**: Event browsing and registration without authentication
+### Installation
 
-### User Roles & Permissions
-1. **Public Users**: Browse colleges, events, and social feed
-2. **College Admins**: Manage college profile, create/edit events, view registrations
-3. **Super Admins**: Approve colleges, moderate content, system oversight
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd collabzone
+   ```
 
-### Event Management
-- **Categories**: Technical, Cultural, Sports, Workshop
-- **Registration System**: Form-based with file upload for payment proof
-- **Participant Tracking**: Current vs maximum participants
-- **Fee Management**: Decimal pricing with revenue tracking
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-### Social Features
-- **Feed Posts**: College-based social sharing with moderation
-- **Content Moderation**: Admin approval system for posts
-- **Community Building**: Inter-college social interaction
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-## Data Flow
+4. **Access the application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:5000
 
-### College Registration Flow
-1. College submits registration form
-2. Admin reviews and approves/rejects
-3. Approved colleges gain access to admin dashboard
-4. Colleges can create and manage events
+## Demo Credentials
 
-### Event Participation Flow
-1. Students browse events across colleges
-2. Registration through detailed forms
-3. Payment proof upload (if fee required)
-4. College admins track registrations
-5. Event analytics and reporting
+### College Admin
+- **Email**: admin@techuni.edu
+- **Password**: password123
 
-### Content Moderation Flow
-1. Colleges/users create feed posts
-2. Posts require admin approval
-3. Approved content appears in public feed
-4. Ongoing moderation capabilities
+### Super Admin
+- **Username**: admin
+- **Password**: admin123
 
-## External Dependencies
+## API Endpoints
 
-### Core Technologies
-- **Database**: PostgreSQL via Neon Database
-- **UI Components**: Radix UI primitives
-- **Form Handling**: React Hook Form with Zod validation
-- **Styling**: Tailwind CSS with CSS variables
-- **Icons**: Lucide React
+### Public Routes
+- `GET /api/colleges` - Get all colleges
+- `GET /api/colleges/:id` - Get college details with events
+- `GET /api/events` - Get all events
+- `GET /api/events/:id` - Get event details
+- `POST /api/registrations` - Register for an event
+- `GET /api/feed` - Get approved feed posts
+- `POST /api/feed` - Create new feed post
 
-### Development Tools
-- **Build**: Vite with React plugin
-- **Type Checking**: TypeScript strict mode
-- **Database**: Drizzle Kit for migrations
-- **Session Store**: PostgreSQL session storage
+### College Admin Routes
+- `POST /api/college/login` - College admin login
+- `POST /api/events` - Create new event
+- `PUT /api/events/:id` - Update event
+- `DELETE /api/events/:id` - Delete event
+- `GET /api/events/:id/registrations` - Get event registrations
 
-### Production Dependencies
-- **Date Handling**: date-fns for date manipulation
-- **Validation**: Zod schemas with Drizzle integration
-- **Image Processing**: Built-in file upload handling
+### Super Admin Routes
+- `POST /api/admin/login` - Super admin login
+- `GET /api/admin/events` - Get all events
+- `GET /api/admin/feed` - Get all feed posts
+- `GET /api/users` - Get all users
 
-## Deployment Strategy
+## Development Features
 
-### Replit Configuration
-- **Platform**: Autoscale deployment target
-- **Build Command**: `npm run build`
-- **Start Command**: `npm run start`
-- **Development**: `npm run dev` on port 5000
-- **Database**: PostgreSQL 16 module enabled
+### VS Code Compatibility
+- Configured for Windows 10 development
+- ESLint and Prettier support
+- IntelliSense for JavaScript and React
 
-### Environment Setup
-- **NODE_ENV**: Automatically set for development/production
-- **DATABASE_URL**: Required environment variable for PostgreSQL connection
-- **Port Configuration**: Internal port 5000 mapped to external port 80
+### Hot Reload
+- Instant refresh on file changes
+- Fast development workflow with Vite
 
-### Build Process
-1. **Frontend**: Vite builds React app to `dist/public`
-2. **Backend**: esbuild bundles server to `dist/index.js`
-3. **Assets**: Static files served from built frontend
-4. **Database**: Migrations applied via `npm run db:push`
+### Responsive Design
+- Mobile-first approach
+- Tailwind CSS utilities
+- Dark mode support
 
-### Development Workflow
-- **Hot Reload**: Vite dev server with HMR
-- **Type Checking**: `npm run check` for TypeScript validation
-- **Database Changes**: Drizzle Kit push for schema updates
+## Environment Configuration
 
-Changelog:
-  - Created database configuration with Neon serverless PostgreSQL
-  - Implemented DatabaseStorage class replacing in-memory storage
-  - All database tables created and schema synchronized
-  - Application now persists data in PostgreSQL database
+### Development
+- Server runs on port 5000
+- Client runs on port 3000
+- Hot reload enabled
 
-User Preferences:
-Preferred communication style: Simple, everyday language.
+### Production
+- Built assets served from Express
+- Optimized bundle with Vite
+- Static file serving
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## Browser Support
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For support and questions:
+- Email: support@collabzone.com
+- Phone: +91 1800-123-4567
+
+---
+
+Built with ❤️ for inter-college collaboration
