@@ -17,7 +17,7 @@ export const colleges = pgTable("colleges", {
   location: text("location").notNull(),
   description: text("description"),
   logoUrl: text("logo_url"),
-  isApproved: boolean("is_approved").default(false),
+  isApproved: boolean("is_approved").default(true),
   studentsCount: integer("students_count").default(0),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -88,6 +88,12 @@ export const insertCollegeSchema = createInsertSchema(colleges).omit({
   isApproved: true,
   studentsCount: true,
   createdAt: true,
+}).extend({
+  name: z.string().min(2, "College name must be at least 2 characters").max(100, "College name must be less than 100 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters").regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain at least one uppercase letter, one lowercase letter, and one number"),
+  location: z.string().min(2, "Location must be at least 2 characters").max(100, "Location must be less than 100 characters"),
+  description: z.string().optional(),
 });
 
 export const insertEventSchema = createInsertSchema(events).omit({
@@ -95,12 +101,33 @@ export const insertEventSchema = createInsertSchema(events).omit({
   currentParticipants: true,
   isActive: true,
   createdAt: true,
+}).extend({
+  name: z.string().min(3, "Event name must be at least 3 characters").max(100, "Event name must be less than 100 characters"),
+  description: z.string().optional(),
+  category: z.enum(["Technical", "Cultural", "Sports", "Workshop"], {
+    required_error: "Please select a category",
+  }),
+  date: z.date({
+    required_error: "Event date is required",
+  }),
+  location: z.string().min(3, "Location must be at least 3 characters").max(100, "Location must be less than 100 characters"),
+  fee: z.string().regex(/^\d+(\.\d{1,2})?$/, "Fee must be a valid amount"),
+  eligibility: z.string().optional(),
+  contactNumbers: z.array(z.string().regex(/^\d{10}$/, "Each contact number must be exactly 10 digits")).min(1, "At least one contact number is required"),
+  maxParticipants: z.number().min(1, "Maximum participants must be at least 1").optional(),
 });
 
 export const insertRegistrationSchema = createInsertSchema(registrations).omit({
   id: true,
   isVerified: true,
   registeredAt: true,
+}).extend({
+  fullName: z.string().min(2, "Full name must be at least 2 characters").max(50, "Full name must be less than 50 characters").regex(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+  college: z.string().min(2, "College name must be at least 2 characters").max(100, "College name must be less than 100 characters"),
+  course: z.string().min(2, "Course name must be at least 2 characters").max(50, "Course name must be less than 50 characters"),
+  address: z.string().optional(),
 });
 
 export const insertFeedPostSchema = createInsertSchema(feedPosts).omit({
@@ -109,6 +136,10 @@ export const insertFeedPostSchema = createInsertSchema(feedPosts).omit({
   comments: true,
   isApproved: true,
   createdAt: true,
+}).extend({
+  author: z.string().min(2, "Author name must be at least 2 characters").max(50, "Author name must be less than 50 characters"),
+  college: z.string().min(2, "College name must be at least 2 characters").max(100, "College name must be less than 100 characters"),
+  content: z.string().min(10, "Content must be at least 10 characters").max(500, "Content must be less than 500 characters"),
 });
 
 export const insertAdminSchema = createInsertSchema(admins).omit({
