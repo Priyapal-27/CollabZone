@@ -1,5 +1,4 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'wouter'
 
 export default function EventCard({ event }) {
   const eventDate = new Date(event.date)

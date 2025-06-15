@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useRoute, Link } from 'wouter'
 import { eventAPI } from '../api'
 
 export default function EventDetail() {
-  const { id } = useParams()
+  const [match, params] = useRoute('/events/:id')
+  const id = params?.id
   const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
