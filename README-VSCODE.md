@@ -1,19 +1,29 @@
-# CollabZone - VS Code Setup for Windows 10
+# CollabZone - Complete VS Code Setup for Windows 10
 
 ## Prerequisites for Windows 10
 
 1. **Node.js** (v18 or higher)
    - Download from: https://nodejs.org/
    - Install the LTS version
+   - Verify installation: `node --version` and `npm --version`
 
 2. **VS Code**
    - Download from: https://code.visualstudio.com/
+   - Install recommended extensions:
+     - ES6 String HTML
+     - JavaScript (ES6) code snippets
+     - Auto Rename Tag
+     - Bracket Pair Colorizer
+     - Live Server (optional)
+
+3. **Git** (optional but recommended)
+   - Download from: https://git-scm.com/
 
 ## Project Setup
 
-1. **Clone/Open the project in VS Code**
+1. **Open the project in VS Code**
    ```bash
-   cd your-project-folder
+   cd CollabZone
    code .
    ```
 
@@ -26,6 +36,23 @@
    ```bash
    npm run dev
    ```
+   The application will run on `http://localhost:5000`
+
+## VS Code Configuration
+
+Create `.vscode/settings.json` for optimal development:
+```json
+{
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.associations": {
+    "*.jsx": "javascriptreact"
+  }
+}
+```
 
 ## Project Structure
 

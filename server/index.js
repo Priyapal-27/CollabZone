@@ -17,10 +17,27 @@ app.use(express.json());
 
 // ========================================
 // TEMPORARY IN-MEMORY DATABASE
-// TODO: Replace with MongoDB when ready
+// ========================================
+// This section contains temporary data storage that simulates a database.
+// When you're ready to integrate MongoDB, follow these steps:
+//
+// 1. Install MongoDB driver: npm install mongodb
+// 2. Replace the arrays below with MongoDB collections
+// 3. Update all array operations to use MongoDB methods
+// 4. Remove this entire section and import your MongoDB connection
+//
+// Example MongoDB setup to replace this section:
+// import { MongoClient } from 'mongodb';
+// const client = new MongoClient('mongodb://localhost:27017');
+// const db = client.db('collabzone');
+// const collegesCollection = db.collection('colleges');
+// const eventsCollection = db.collection('events');
+// const registrationsCollection = db.collection('registrations');
+// const feedPostsCollection = db.collection('feedPosts');
+// const usersCollection = db.collection('users');
 // ========================================
 
-// Mock data - Replace with MongoDB collections
+// TEMPORARY ARRAYS (Remove when MongoDB is integrated)
 let colleges = [
   {
     id: 1,
@@ -81,11 +98,11 @@ let events = [
   }
 ];
 
-// TODO: Replace these arrays with MongoDB collections
-let registrations = [];
-let feedPosts = [];
-let users = [];
-let idCounter = 3;
+// TEMPORARY ARRAYS (Remove when MongoDB is integrated)
+let registrations = []; // Replace with: registrationsCollection
+let feedPosts = [];     // Replace with: feedPostsCollection  
+let users = [];         // Replace with: usersCollection
+let idCounter = 3;      // Replace with: MongoDB auto-generated _id
 
 // ========================================
 // API ROUTES - Backend oriented structure
@@ -94,7 +111,8 @@ let idCounter = 3;
 // Colleges endpoints
 app.get('/api/colleges', (req, res) => {
   try {
-    // TODO: Replace with MongoDB query: await db.collection('colleges').find({}).toArray()
+    // TEMPORARY: Using in-memory array
+    // MongoDB replacement: const colleges = await collegesCollection.find({}).toArray();
     res.json(colleges);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch colleges' });
@@ -104,14 +122,16 @@ app.get('/api/colleges', (req, res) => {
 app.get('/api/colleges/:id', (req, res) => {
   try {
     const collegeId = parseInt(req.params.id);
-    // TODO: Replace with MongoDB query: await db.collection('colleges').findOne({_id: collegeId})
+    // TEMPORARY: Using array.find()
+    // MongoDB replacement: const college = await collegesCollection.findOne({_id: collegeId});
     const college = colleges.find(c => c.id === collegeId);
     
     if (!college) {
       return res.status(404).json({ error: 'College not found' });
     }
     
-    // TODO: Replace with MongoDB query: await db.collection('events').find({collegeId: collegeId}).toArray()
+    // TEMPORARY: Using array.filter()
+    // MongoDB replacement: const collegeEvents = await eventsCollection.find({collegeId: collegeId}).toArray();
     const collegeEvents = events.filter(e => e.collegeId === collegeId);
     res.json({ college, events: collegeEvents });
   } catch (error) {
@@ -121,14 +141,15 @@ app.get('/api/colleges/:id', (req, res) => {
 
 app.post('/api/colleges', (req, res) => {
   try {
-    // TODO: Replace with MongoDB insert: await db.collection('colleges').insertOne(newCollege)
+    // TEMPORARY: Using array.push() and manual ID increment
+    // MongoDB replacement: const result = await collegesCollection.insertOne({...req.body, approved: true, createdAt: new Date()});
     const newCollege = {
-      id: idCounter++,
+      id: idCounter++,  // MongoDB replacement: remove this, use result.insertedId
       ...req.body,
       approved: true,
       createdAt: new Date()
     };
-    colleges.push(newCollege);
+    colleges.push(newCollege);  // MongoDB replacement: remove this line
     res.status(201).json(newCollege);
   } catch (error) {
     res.status(500).json({ error: 'Failed to create college' });
@@ -138,7 +159,8 @@ app.post('/api/colleges', (req, res) => {
 // Events endpoints
 app.get('/api/events', (req, res) => {
   try {
-    // TODO: Replace with MongoDB query: await db.collection('events').find({}).toArray()
+    // TEMPORARY: Using in-memory array
+    // MongoDB replacement: const events = await eventsCollection.find({}).toArray();
     res.json(events);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch events' });
@@ -148,14 +170,16 @@ app.get('/api/events', (req, res) => {
 app.get('/api/events/:id', (req, res) => {
   try {
     const eventId = parseInt(req.params.id);
-    // TODO: Replace with MongoDB query: await db.collection('events').findOne({_id: eventId})
+    // TEMPORARY: Using array.find()
+    // MongoDB replacement: const event = await eventsCollection.findOne({_id: eventId});
     const event = events.find(e => e.id === eventId);
     
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
     
-    // TODO: Replace with MongoDB lookup/join
+    // TEMPORARY: Manual join using array.find()
+    // MongoDB replacement: Use $lookup aggregation or populate in Mongoose
     const college = colleges.find(c => c.id === event.collegeId);
     res.json({ ...event, collegeName: college?.name });
   } catch (error) {
@@ -165,13 +189,14 @@ app.get('/api/events/:id', (req, res) => {
 
 app.post('/api/events', (req, res) => {
   try {
-    // TODO: Replace with MongoDB insert: await db.collection('events').insertOne(newEvent)
+    // TEMPORARY: Using array.push() and manual ID increment
+    // MongoDB replacement: const result = await eventsCollection.insertOne({...req.body, createdAt: new Date()});
     const newEvent = {
-      id: idCounter++,
+      id: idCounter++,  // MongoDB replacement: remove this, use result.insertedId
       ...req.body,
       createdAt: new Date()
     };
-    events.push(newEvent);
+    events.push(newEvent);  // MongoDB replacement: remove this line
     res.status(201).json(newEvent);
   } catch (error) {
     res.status(500).json({ error: 'Failed to create event' });
@@ -181,13 +206,16 @@ app.post('/api/events', (req, res) => {
 app.put('/api/events/:id', (req, res) => {
   try {
     const eventId = parseInt(req.params.id);
+    // TEMPORARY: Using array.findIndex()
+    // MongoDB replacement: const result = await eventsCollection.updateOne({_id: eventId}, {$set: req.body});
     const eventIndex = events.findIndex(e => e.id === eventId);
     
     if (eventIndex === -1) {
       return res.status(404).json({ error: 'Event not found' });
     }
     
-    // TODO: Replace with MongoDB update: await db.collection('events').updateOne({_id: eventId}, {$set: req.body})
+    // TEMPORARY: Manual array update
+    // MongoDB replacement: const updatedEvent = await eventsCollection.findOne({_id: eventId});
     events[eventIndex] = { ...events[eventIndex], ...req.body };
     res.json(events[eventIndex]);
   } catch (error) {
@@ -198,13 +226,16 @@ app.put('/api/events/:id', (req, res) => {
 app.delete('/api/events/:id', (req, res) => {
   try {
     const eventId = parseInt(req.params.id);
+    // TEMPORARY: Using array.findIndex() and splice()
+    // MongoDB replacement: const result = await eventsCollection.deleteOne({_id: eventId});
     const eventIndex = events.findIndex(e => e.id === eventId);
     
     if (eventIndex === -1) {
       return res.status(404).json({ error: 'Event not found' });
     }
     
-    // TODO: Replace with MongoDB delete: await db.collection('events').deleteOne({_id: eventId})
+    // TEMPORARY: Manual array deletion
+    // MongoDB replacement: check result.deletedCount > 0
     events.splice(eventIndex, 1);
     res.json({ message: 'Event deleted successfully' });
   } catch (error) {
@@ -215,13 +246,14 @@ app.delete('/api/events/:id', (req, res) => {
 // Registrations endpoints
 app.post('/api/registrations', (req, res) => {
   try {
-    // TODO: Replace with MongoDB insert: await db.collection('registrations').insertOne(newRegistration)
+    // TEMPORARY: Using array.push() and manual ID increment
+    // MongoDB replacement: const result = await registrationsCollection.insertOne({...req.body, registeredAt: new Date()});
     const newRegistration = {
-      id: idCounter++,
+      id: idCounter++,  // MongoDB replacement: remove this, use result.insertedId
       ...req.body,
       registeredAt: new Date()
     };
-    registrations.push(newRegistration);
+    registrations.push(newRegistration);  // MongoDB replacement: remove this line
     res.status(201).json(newRegistration);
   } catch (error) {
     res.status(500).json({ error: 'Failed to register for event' });
@@ -231,7 +263,8 @@ app.post('/api/registrations', (req, res) => {
 app.get('/api/events/:id/registrations', (req, res) => {
   try {
     const eventId = parseInt(req.params.id);
-    // TODO: Replace with MongoDB query: await db.collection('registrations').find({eventId: eventId}).toArray()
+    // TEMPORARY: Using array.filter()
+    // MongoDB replacement: const eventRegistrations = await registrationsCollection.find({eventId: eventId}).toArray();
     const eventRegistrations = registrations.filter(r => r.eventId === eventId);
     res.json(eventRegistrations);
   } catch (error) {
@@ -242,7 +275,8 @@ app.get('/api/events/:id/registrations', (req, res) => {
 // Social Feed endpoints
 app.get('/api/feed', (req, res) => {
   try {
-    // TODO: Replace with MongoDB query: await db.collection('feedPosts').find({approved: true}).toArray()
+    // TEMPORARY: Using array.filter()
+    // MongoDB replacement: const approvedPosts = await feedPostsCollection.find({approved: true}).toArray();
     res.json(feedPosts.filter(post => post.approved));
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch feed posts' });
@@ -251,14 +285,15 @@ app.get('/api/feed', (req, res) => {
 
 app.post('/api/feed', (req, res) => {
   try {
-    // TODO: Replace with MongoDB insert: await db.collection('feedPosts').insertOne(newPost)
+    // TEMPORARY: Using array.push() and manual ID increment
+    // MongoDB replacement: const result = await feedPostsCollection.insertOne({...req.body, approved: true, timestamp: new Date()});
     const newPost = {
-      id: idCounter++,
+      id: idCounter++,  // MongoDB replacement: remove this, use result.insertedId
       ...req.body,
       approved: true,
       timestamp: new Date()
     };
-    feedPosts.push(newPost);
+    feedPosts.push(newPost);  // MongoDB replacement: remove this line
     res.status(201).json(newPost);
   } catch (error) {
     res.status(500).json({ error: 'Failed to create feed post' });
@@ -270,13 +305,15 @@ app.post('/api/college/login', (req, res) => {
   try {
     const { email, password } = req.body;
     
-    // TODO: Replace with MongoDB query and password verification
-    // const college = await db.collection('colleges').findOne({email: email});
+    // TEMPORARY: Simple email lookup without password verification
+    // MongoDB replacement: 
+    // const college = await collegesCollection.findOne({email: email});
     // const isValid = await bcrypt.compare(password, college.passwordHash);
     const college = colleges.find(c => c.email === email);
     
     if (college) {
-      // TODO: Generate real JWT token using jsonwebtoken library
+      // TEMPORARY: Mock JWT token
+      // MongoDB replacement: const token = jwt.sign({id: college._id}, process.env.JWT_SECRET);
       res.json({ success: true, college, token: 'mock-jwt-token' });
     } else {
       res.status(401).json({ error: 'Invalid credentials' });
@@ -290,8 +327,9 @@ app.post('/api/admin/login', (req, res) => {
   try {
     const { username, password } = req.body;
     
-    // TODO: Replace with proper admin authentication
-    // const admin = await db.collection('admins').findOne({username: username});
+    // TEMPORARY: Hardcoded admin credentials
+    // MongoDB replacement: 
+    // const admin = await adminsCollection.findOne({username: username});
     // const isValid = await bcrypt.compare(password, admin.passwordHash);
     if (username === 'admin' && password === 'admin123') {
       res.json({ success: true, user: { username: 'admin' }, token: 'mock-admin-token' });
@@ -306,8 +344,8 @@ app.post('/api/admin/login', (req, res) => {
 // Admin endpoints
 app.get('/api/admin/events', (req, res) => {
   try {
-    // TODO: Add admin authorization middleware
-    // TODO: Replace with MongoDB query: await db.collection('events').find({}).toArray()
+    // TEMPORARY: No authorization middleware
+    // MongoDB replacement: Add JWT middleware + await eventsCollection.find({}).toArray();
     res.json(events);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch admin events' });
@@ -316,8 +354,8 @@ app.get('/api/admin/events', (req, res) => {
 
 app.get('/api/admin/feed', (req, res) => {
   try {
-    // TODO: Add admin authorization middleware
-    // TODO: Replace with MongoDB query: await db.collection('feedPosts').find({}).toArray()
+    // TEMPORARY: No authorization middleware
+    // MongoDB replacement: Add JWT middleware + await feedPostsCollection.find({}).toArray();
     res.json(feedPosts);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch admin feed' });
@@ -326,7 +364,8 @@ app.get('/api/admin/feed', (req, res) => {
 
 app.get('/api/users', (req, res) => {
   try {
-    // TODO: Replace with MongoDB query: await db.collection('users').find({}).toArray()
+    // TEMPORARY: Using in-memory array
+    // MongoDB replacement: const users = await usersCollection.find({}).toArray();
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch users' });
