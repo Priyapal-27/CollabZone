@@ -1,5 +1,4 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Router, Route, Switch } from 'wouter'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ThemeProvider from './components/ThemeProvider'
@@ -34,20 +33,20 @@ function App() {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white">
           <Navbar />
           <main className="pt-16">
-            <Routes>
+            <Switch>
               {/* Public Routes */}
-              <Route path="/" element={<Home />} />
-              <Route path="/colleges" element={<Colleges />} />
-              <Route path="/colleges/:id" element={<CollegeProfile />} />
-              <Route path="/events/:id" element={<EventDetail />} />
-              <Route path="/register/:eventId" element={<RegisterEvent />} />
-              <Route path="/social-feed" element={<SocialFeed />} />
-              <Route path="/contact" element={<Contact />} />
+              <Route path="/" component={Home} />
+              <Route path="/colleges" component={Colleges} />
+              <Route path="/colleges/:id" component={CollegeProfile} />
+              <Route path="/events/:id" component={EventDetail} />
+              <Route path="/register/:eventId" component={RegisterEvent} />
+              <Route path="/social-feed" component={SocialFeed} />
+              <Route path="/contact" component={Contact} />
               
               {/* College Admin Routes */}
-              <Route path="/college/login" element={<CollegeLogin />} />
-              <Route path="/college/dashboard" element={<CollegeDashboard />} />
-              <Route path="/college/create-event" element={<CreateEvent />} />
+              <Route path="/college/login" component={CollegeLogin} />
+              <Route path="/college/dashboard" component={CollegeDashboard} />
+              <Route path="/college/create-event" component={CreateEvent} />
               <Route path="/college/manage-events" element={<ManageEvents />} />
               <Route path="/college/registrations/:eventId" element={<ViewRegistrations />} />
               
