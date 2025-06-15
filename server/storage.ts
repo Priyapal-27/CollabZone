@@ -97,7 +97,7 @@ export class DatabaseStorage implements IStorage {
   async createCollege(insertCollege: InsertCollege): Promise<College> {
     const [college] = await db
       .insert(colleges)
-      .values(insertCollege)
+      .values({ ...insertCollege, isApproved: true })
       .returning();
     return college;
   }
@@ -113,7 +113,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCollege(id: number): Promise<boolean> {
     const result = await db.delete(colleges).where(eq(colleges.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   async getEvent(id: number): Promise<Event | undefined> {
@@ -130,17 +130,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUpcomingEvents(): Promise<Event[]> {
-    return await db.select().from(events).where(eq(events.isApproved, true)).orderBy(asc(events.createdAt));
+    return await db.select().from(events).where(eq(events.isActive, true)).orderBy(asc(events.createdAt));
   }
 
   async getPastEvents(): Promise<Event[]> {
-    return await db.select().from(events).where(eq(events.isApproved, true)).orderBy(desc(events.createdAt));
+    return await db.select().from(events).where(eq(events.isActive, true)).orderBy(desc(events.createdAt));
   }
 
   async getEventsByCategory(category: string): Promise<Event[]> {
     return await db.select().from(events).where(and(
       eq(events.category, category),
-      eq(events.isApproved, true)
+      eq(events.isActive, true)
     )).orderBy(desc(events.createdAt));
   }
 
@@ -163,7 +163,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteEvent(id: number): Promise<boolean> {
     const result = await db.delete(events).where(eq(events.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   async getRegistration(id: number): Promise<Registration | undefined> {
@@ -194,7 +194,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteRegistration(id: number): Promise<boolean> {
     const result = await db.delete(registrations).where(eq(registrations.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   async getFeedPost(id: number): Promise<FeedPost | undefined> {
@@ -233,7 +233,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteFeedPost(id: number): Promise<boolean> {
     const result = await db.delete(feedPosts).where(eq(feedPosts.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   async getAdmin(id: number): Promise<Admin | undefined> {
