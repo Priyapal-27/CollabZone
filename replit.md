@@ -128,7 +128,10 @@ CollabZone is a full-stack web application designed to connect multiple colleges
 - **Database Changes**: Drizzle Kit push for schema updates
 
 Changelog:
-- June 14, 2025. Initial setup
+  - Created database configuration with Neon serverless PostgreSQL
+  - Implemented DatabaseStorage class replacing in-memory storage
+  - All database tables created and schema synchronized
+  - Application now persists data in PostgreSQL database
 
 User Preferences:
 Preferred communication style: Simple, everyday language.
