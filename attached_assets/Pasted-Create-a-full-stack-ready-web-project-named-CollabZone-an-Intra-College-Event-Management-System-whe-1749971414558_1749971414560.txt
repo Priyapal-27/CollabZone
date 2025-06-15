@@ -1,0 +1,107 @@
+Create a full-stack-ready web project named CollabZone, an Intra-College Event Management System where multiple colleges can register, post events, and users can explore and register.
+
+Use React, Tailwind CSS, and React Router DOM for the frontend. Build it backend-oriented, keeping all data dynamic and coming from APIs (to be connected with Express & MongoDB). Do not hardcode any dummy data. Prepare proper structure to plug in backend easily.
+
+🔧 Stack:
+Frontend: React, Tailwind CSS, Router DOM, Axios (for API placeholders)
+
+Backend (to be integrated later): Node.js, Express.js, MongoDB (MongoDB Atlas)
+
+QR Payments: Static QR (uploaded by admin) or use free generator
+
+Image Upload: Local /uploads folder or Cloudinary (optional)
+
+Authentication: JWT-based (will be added later)
+
+🌓 Theme Support:
+Include a theme toggle component with Tailwind’s dark mode setup. Save theme preference in localStorage.
+
+Primary Color: #0066FF → text-blue-600, dark:text-blue-400
+
+Accent Color: #FF7A00 → bg-orange-500, hover:bg-orange-600
+
+Light BG: bg-gray-50, Dark BG: dark:bg-gray-900
+
+Cards: bg-white / dark:bg-gray-800, Text: text-gray-800 / dark:text-white
+
+🏠 Pages & Components:
+Home.jsx: Landing page with logo, intro, call-to-action, and theme toggle.
+
+Colleges.jsx: Shows rectangular cards for colleges (name + logo), fetched from backend /api/colleges
+
+CollegeProfile.jsx: On click, fetch college info + events from /api/colleges/:id
+
+Split events: Upcoming (future dates) and Past (past dates)
+
+Event Card = Event Name (highlighted), Poster, Date (compare with Date.now())
+
+EventDetail.jsx: Fetch from /api/events/:id → Show:
+
+Name, Time, Fee, Eligibility, Hosts (multiple), Contact Nos, Openings, Prize
+
+“Register for Event” button
+
+RegisterEvent.jsx: Form with:
+
+User name, email, phone, course/position, college/company, address
+
+Static or dynamic QR code image (from /uploads)
+
+Show Success alert after mock submission
+
+SocialFeed.jsx: Simple public feed, fetched from /api/feed
+
+Anyone can post (Post = image/text, author, timestamp)
+
+Contact.jsx: Static support info
+
+👤 Admin (College) Screens:
+CollegeLogin.jsx: Login via email/password → fetch /api/college/login
+
+CollegeDashboard.jsx: Summary + access to Create/Manage Events
+
+CreateEvent.jsx: Form with name, date/time, eligibility, hosters, fee, prize, openings, QR image upload
+
+POST to /api/events
+
+ManageEvents.jsx: List of created events → Edit/Delete via /api/events/:id
+
+ViewRegistrations.jsx: View event-specific registrations /api/events/:id/registrations
+
+🛡️ Super Admin Screens:
+AdminLogin.jsx, AdminDashboard.jsx
+
+CollegeApproval.jsx: Fetch pending colleges /api/admin/pending-colleges
+
+AllEvents.jsx: View all events /api/admin/events
+
+FeedModeration.jsx: Approve/delete feed posts /api/feed/:id
+
+AllUsers.jsx: View all users /api/users
+
+📁 Folder Structure:
+bash
+Copy
+Edit
+/client (React App)
+├── /components (Navbar, Footer, EventCard, CollegeCard, ThemeToggler)
+├── /pages (Home, Colleges, CollegeProfile, EventDetail, RegisterEvent, SocialFeed, Contact)
+├── /college-admin (Login, Dashboard, CreateEvent, ManageEvents, ViewRegistrations)
+├── /admin (Login, Dashboard, CollegeApproval, AllEvents, FeedModeration, AllUsers)
+├── /assets (logos, posters)
+├── App.jsx, index.jsx, api.js (Axios config)
+Backend (/server) and DB (MongoDB Atlas) will be connected later via Express APIs.
+
+🧩 API ENDPOINTS & MAPPING:
+Section	API (to be integrated later)	Function
+Colleges Page	/api/colleges	Get all registered colleges
+College Detail Page	/api/colleges/:id	Get description + events
+Events	/api/events, /api/events/:id	Get/create/edit events
+Register User	/api/registrations	Submit registration for event
+Social Feed	/api/feed	Get/add feed posts
+Auth (college/admin)	/api/college/login, /api/admin/login	Login using JWT
+QR Upload	/api/uploads/qr	Upload QR for fee (later with multer)
+
+🔁 Make all data dynamic and component-driven, so Express API can easily be connected.
+🔐 Prepare routes and structure to support secure backend auth (JWT) in future.
+
