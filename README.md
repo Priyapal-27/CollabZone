@@ -1,149 +1,121 @@
 # CollabZone - Intra-College Event Management System
 
-A full-stack web application designed to connect multiple colleges and manage inter-college events. The platform allows colleges to register, post events, and users can explore and register for events across institutions.
+A full-stack web application for managing college events, registrations, and social interactions between colleges.
+
+## Tech Stack
+
+- **Frontend**: React.js with JavaScript
+- **Backend**: Node.js with Express.js
+- **Database**: In-memory storage (ready for MongoDB integration)
+- **Styling**: Tailwind CSS
+- **Development**: Vite for bundling
 
 ## Features
 
 ### Public Features
-- **Browse Colleges**: Explore colleges and their upcoming events
-- **Event Discovery**: View detailed event information with registration capabilities
-- **Event Registration**: Register for events with integrated payment support
-- **Social Feed**: Community posts and announcements
-- **Dark/Light Theme**: Toggle between themes with system preference detection
+- Browse colleges and their events
+- View detailed event information
+- Register for events
+- Social feed for inter-college interactions
+- Contact information
 
 ### College Admin Features
-- **College Dashboard**: Overview of events and registrations
-- **Event Management**: Create, edit, and delete events
-- **Registration Management**: View and export event registrations
-- **Automatic Approval**: Colleges are auto-approved upon registration
+- College login and dashboard
+- Create and manage events
+- View event registrations
+- Event analytics
 
-### Super Admin Features
-- **Platform Overview**: Monitor all colleges, events, and users
-- **Event Moderation**: View and manage all platform events
-- **Feed Moderation**: Review and approve community posts
-- **User Management**: View platform users and activity
+### System Admin Features
+- Admin dashboard
+- Manage all events across colleges
+- User management
+- Content moderation
 
-## Tech Stack
+## Quick Start
 
-### Frontend
-- **React 18** with JavaScript
-- **React Router DOM** for routing
-- **Tailwind CSS** for styling
-- **Axios** for API requests
+### For Windows 10 with VS Code
 
-### Backend
-- **Node.js** with Express.js
-- **JavaScript ES Modules**
-- **CORS** enabled for cross-origin requests
+1. **Prerequisites**
+   - Install Node.js (v18+) from https://nodejs.org/
+   - Install VS Code from https://code.visualstudio.com/
 
-### Development
-- **Vite** for fast development and building
-- **Hot Module Replacement** for development efficiency
-
-## Project Structure
-
-```
-├── client/                 # React frontend application
-│   ├── src/
-│   │   ├── components/     # Reusable components (Navbar, Footer, Cards)
-│   │   ├── pages/          # Public pages (Home, Colleges, Events, etc.)
-│   │   ├── college-admin/  # College admin interface
-│   │   ├── admin/          # Super admin interface
-│   │   └── assets/         # Static assets
-├── server/                 # Express.js backend
-├── uploads/                # File upload directory
-└── README.md
-```
-
-## Getting Started
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn package manager
-
-### Installation
-
-1. **Clone the repository**
+2. **Setup**
    ```bash
    git clone <repository-url>
-   cd collabzone
-   ```
-
-2. **Install dependencies**
-   ```bash
+   cd CollabZone
    npm install
-   ```
-
-3. **Start the development server**
-   ```bash
    npm run dev
    ```
 
-4. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:5000
+3. **Access the application**
+   - Open http://localhost:5000
+   - Admin login: username `admin`, password `admin123`
+   - College login: Use any email from the sample colleges
 
-## Demo Credentials
+## Development
 
-### College Admin
-- **Email**: admin@techuni.edu
-- **Password**: password123
+### Project Structure
+```
+CollabZone/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── components/     # Reusable UI components
+│   │   ├── pages/          # Page components
+│   │   ├── admin/          # Admin panel pages
+│   │   ├── college-admin/  # College admin pages
+│   │   └── api.js          # API client functions
+├── server/                 # Express.js backend
+│   ├── index.js           # Main server file (with MongoDB comments)
+│   └── vite.js            # Vite integration
+├── .vscode/               # VS Code configuration
+└── package.json           # Dependencies and scripts
+```
 
-### Super Admin
-- **Username**: admin
-- **Password**: admin123
+### Available Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+
+### VS Code Setup
+The project includes VS Code configuration for optimal development experience:
+- JavaScript/React syntax highlighting
+- Auto-formatting on save
+- Debugging configuration
+- Recommended extensions
+
+## Database Integration
+
+The application currently uses in-memory storage for development. All database operations are clearly marked with comments for easy MongoDB integration:
+
+```javascript
+// TEMPORARY: Using in-memory array
+// MongoDB replacement: const colleges = await collegesCollection.find({}).toArray();
+```
+
+### MongoDB Integration Steps
+1. Install MongoDB driver: `npm install mongodb`
+2. Replace commented sections in `server/index.js`
+3. Update connection string and collections
+4. Remove temporary arrays and ID counters
 
 ## API Endpoints
 
-### Public Routes
-- `GET /api/colleges` - Get all colleges
-- `GET /api/colleges/:id` - Get college details with events
-- `GET /api/events` - Get all events
-- `GET /api/events/:id` - Get event details
-- `POST /api/registrations` - Register for an event
-- `GET /api/feed` - Get approved feed posts
-- `POST /api/feed` - Create new feed post
+### Public API
+- `GET /api/colleges` - List all colleges
+- `GET /api/colleges/:id` - College details with events
+- `GET /api/events` - List all events
+- `GET /api/events/:id` - Event details
+- `POST /api/registrations` - Register for event
+- `GET /api/feed` - Social feed posts
 
-### College Admin Routes
+### Authentication
 - `POST /api/college/login` - College admin login
-- `POST /api/events` - Create new event
-- `PUT /api/events/:id` - Update event
-- `DELETE /api/events/:id` - Delete event
-- `GET /api/events/:id/registrations` - Get event registrations
+- `POST /api/admin/login` - System admin login
 
-### Super Admin Routes
-- `POST /api/admin/login` - Super admin login
-- `GET /api/admin/events` - Get all events
-- `GET /api/admin/feed` - Get all feed posts
-- `GET /api/users` - Get all users
-
-## Development Features
-
-### VS Code Compatibility
-- Configured for Windows 10 development
-- ESLint and Prettier support
-- IntelliSense for JavaScript and React
-
-### Hot Reload
-- Instant refresh on file changes
-- Fast development workflow with Vite
-
-### Responsive Design
-- Mobile-first approach
-- Tailwind CSS utilities
-- Dark mode support
-
-## Environment Configuration
-
-### Development
-- Server runs on port 5000
-- Client runs on port 3000
-- Hot reload enabled
-
-### Production
-- Built assets served from Express
-- Optimized bundle with Vite
-- Static file serving
+### Admin API
+- `GET /api/admin/events` - Manage all events
+- `GET /api/admin/feed` - Moderate feed posts
+- `GET /api/users` - User management
 
 ## Contributing
 
@@ -153,23 +125,6 @@ A full-stack web application designed to connect multiple colleges and manage in
 4. Test thoroughly
 5. Submit a pull request
 
-## Browser Support
-
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
 ## License
 
-This project is licensed under the MIT License.
-
-## Support
-
-For support and questions:
-- Email: support@collabzone.com
-- Phone: +91 1800-123-4567
-
----
-
-Built with ❤️ for inter-college collaboration
+MIT License - see LICENSE file for details

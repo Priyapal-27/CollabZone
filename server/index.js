@@ -3,7 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { createServer } from './vite.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -372,18 +372,13 @@ app.get('/api/users', (req, res) => {
   }
 });
 
-// Development vs Production setup
-if (process.env.NODE_ENV === 'development') {
-  // Development: Use Vite dev server
-  const { app: viteApp } = await createServer();
-  app.use('/', viteApp);
-} else {
-  // Production: Serve built React app
-  app.use(express.static(path.join(__dirname, '../client/dist')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-  });
-}
+// Serve static files and React app
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// Serve React app for all other routes (SPA)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
