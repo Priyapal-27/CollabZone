@@ -3,6 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { createServer } from './vite.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,7 +14,6 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // ========================================
 // TEMPORARY IN-MEMORY DATABASE
@@ -333,16 +333,24 @@ app.get('/api/users', (req, res) => {
   }
 });
 
-// Serve React app for all other routes (SPA)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-});
+// Development vs Production setup
+if (process.env.NODE_ENV === 'development') {
+  // Development: Use Vite dev server
+  const { app: viteApp } = await createServer();
+  app.use('/', viteApp);
+} else {
+  // Production: Serve built React app
+  app.use(express.static(path.join(__dirname, '../client/dist')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  });
+}
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 CollabZone Server running on port ${PORT}`);
-  console.log(`📊 Backend: Express.js with in-memory database`);
-  console.log(`⚛️ Frontend: React with Vite`);
-  console.log(`💡 Ready for MongoDB integration!`);
-  console.log(`🔧 VS Code compatible for Windows 10`);
+  console.log(`CollabZone Server running on port ${PORT}`);
+  console.log(`Backend: Express.js with in-memory database`);
+  console.log(`Frontend: React with Vite`);
+  console.log(`Ready for MongoDB integration!`);
+  console.log(`VS Code compatible for Windows 10`);
 });
